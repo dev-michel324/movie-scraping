@@ -12,8 +12,11 @@ class Varredura():
         page = soup.find('div', class_="pm-category-subcats")
         
         for cat in page.find_all('li'):
-            self.links.append('https://redecanais.wf'+cat.a['href'])
-            self.category.append(cat.text)
+            if 'show' in cat.a['href']:
+                continue
+            else:
+                self.links.append('https://redecanais.wf'+cat.a['href'])
+                self.category.append(cat.text)
 
     def varrerPage(self, total: int, url: str):
         dic = [[], [], []]
@@ -33,6 +36,8 @@ class Varredura():
                 dic[2].append(i['data-echo'])
 
             for i in range(len(dic[0])):
+                # with open('movies.txt', 'a') as arquivo:
+                #     arquivo.write(dic[0][i]+'\n'+dic[1][i]+'\n'+dic[2][i]+'\n\n')
                 print(
                     'Title: '+dic[0][i]+'\n'
                     'Link: '+dic[1][i]+"\n"
@@ -60,7 +65,8 @@ class Varredura():
 var = Varredura()
 var.categoria()
 total = var.links
-# var.page_total(n=3)
 for i in range(0, len(total)):
-    print('CATEGORIA: ', var.category[i])
+    print('\nCATEGORIA: '+ var.category[i]+'\n')
+    # with open('movies.txt', 'a') as arquivo:
+    #     arquivo.write('\nCATEGORIA: '+var.category[i]+'\n\n')
     var.page_total(n=i)
