@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Sobre Mim{% endblock %}
+
+{% block submenu %}
+    {% for i in category %}
+    <span class="submenu"><li><a href="#">{{i}}</a></li></span>
+    {% endfor %}
+
+{% endblock %}
+
+{% block content %}
+    <h2>Sobre mim</h2>
+
+{% endblock %}

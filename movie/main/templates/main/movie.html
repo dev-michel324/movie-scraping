@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}ScrpMovie - {{movie.nome}}{% endblock %}
+
+{% block style %}
+    .btn{
+        color: white;
+        background-color: red;
+        text-align: center;
+    }
+    .btn:hover{
+        background-color: rgb(140, 11, 1);
+        color: white;
+    }
+    #categoria{
+        background-color: red;
+        border-radius: 5px;
+        color: white;
+        padding: 2px;
+        margin-bottom: 5px;
+        <!-- position: relative; -->
+    }
+    .btn{
+        margin-top: 5px;
+    }
+{% endblock %}
+
+{% block content %}
+    <div class="container" style="margin-bottom: 5%;">
+        <div>
+        <div style="float: left; margin-right: 5%;">
+        <img style="border-radius: 10px;" src="{{movie.image}}" width="350px" height="350px" class="img-responsive" alt="capa de {{movie.nome|truncatechars:30}}">
+        
+        </div>
+        <div>
+            <h1 style="width: 80%; text-align: justify;">{{movie.nome}}</h1>
+            <p style="width: 80%; text-align: left;">{{description|linebreaksbr}}</p>
+            <span id="categoria">{{movie.categoria}}</span>
+        </div>
+    </div>
+    <div id="btn-assistir">
+        <a href="{{embed}}" target="_blank"><span class="btn">ASSISTIR</span></a>
+    </div>
+    
+
+    </div>
+
+
+{% endblock %}

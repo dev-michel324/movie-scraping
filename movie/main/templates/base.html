@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Michel Gomes M.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <style>
+      {% block style %}{% endblock %}
+        body{
+          color: white;
+            background-color: rgb(44, 46, 56);
+        }
+        .nav-color{
+            background-color: rgb(26, 27, 33);
+            border: none;
+            border-radius: 0;
+        }
+        .nav-color a:hover{
+            color: white;
+        }
+        #nav-search-button{
+            background-color: rgb(44, 46, 56);
+            color: white;
+        }
+        #nav-search-button:hover{
+            background-color: grey;
+        }
+        .dropdown ul{
+            background-color: rgb(26, 27, 33);
+        }
+        .submenu{
+            text-align: center;
+            text-decoration: none;
+        }
+        .submenu a{
+            text-decoration: none;
+            color: grey;
+        }
+        .thumbnail{
+          background-color: transparent;
+          border: none;
+          box-shadow: 0px 0px 10px rgb(26, 27, 33);
+          height: 32em;
+        }
+        .a-movie:hover{
+          text-decoration: none;
+        }
+        .thumbnail .caption{
+          color: white;
+        }
+        .thumbnail .caption h3{
+          font-size: medium;
+        }
+        .thumbnail:hover{
+          background-color: rgb(63, 62, 59);
+          box-shadow: 0px 0px 10px white; 
+        }
+        .thumbnail > img {
+        height: 25em;
+}
+        .section{
+          margin-bottom: 2%;
+          padding-top: 1%;
+          padding-left: 1%;
+          padding-right: 1%;
+          box-shadow: 0px 0px 10px rgb(26, 27, 33);
+        }
+        .caption{
+          display: block;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-default nav-color">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'main:index' %}"><span style="color: red;">Scrp</span><span style="color: rgb(66, 65, 63);">Movies</span></a>
+
+          </div>
+      
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li><a href="{% url 'main:index' %}">Home</a></li>
+              <li><a href="{% url 'main:about' %}">Sobre</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categorias <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    {% if category %}
+                    <span class="submenu"><li><a href="{% url 'main:todos' %}">Todos</a></li></span>
+                        {% for i in category %}
+                        <span class="submenu"><li><a href="/categoria/{{i}}">{{i}}</a></li></span>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+              </li>
+            </ul>
+            <form class="navbar-form navbar-right" method="get">{% csrf_token %}
+              <div class="form-group">
+                <input type="text" class="form-control" name="search" placeholder="Pesquisar em todo site">
+              </div>
+              <button type="submit" class="btn" id="nav-search-button">Pesquisar</button>
+            </form>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+
+        <main>
+        {% block content %}
+        {% endblock %}
+        </main>
+</body>
+</html>

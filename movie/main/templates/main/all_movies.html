@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Todos os filmes{% endblock %}
+
+{% block style %}
+    td a{
+        text-decoration: none;
+        color: white;
+    }
+    td a:hover{
+        text-decoration: none;
+        color: grey
+    }
+    <!-- body{
+        color: white;
+    } -->
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% if movies %}
+        <h3>Total: {{movies.count}}</h3>
+        <div>
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Add em</th>
+                </tr>
+                {% for movie in movies %}
+                <tr>
+                    <td><a href="/filme/{{movie.nome}}">{{movie.nome}}</a></td>
+                    <td>{{movie.categoria}}</td>
+                    <td>{{movie.added|date:"b Y"}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+        {% endif %}
+
+    </div>
+{% endblock %}

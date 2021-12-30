@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Página inicial{% endblock %}
+
+{% block content %}
+    <div class="container" style="color: white;">
+      <div class="row" style="padding-left: 1%; padding-right: 1%;">
+        <h2 style="float: left;">Últimos adicionados</h2>
+        <a href="/filmes/todos"><h3 style="float: right;">Ver todos</h3></a>
+      </div>
+            <div class="section">
+            <div class="row">
+            {% for f in last_added %}
+                <div class="col-xs-6 col-md-3">
+                  <a href="/filme/{{f.nome}}" class="a-movie"><div class="thumbnail">
+                    <img src="{{f.image}}" alt="{{f.nome}}">
+                    <div class="caption">
+                      <h4>{{f.nome|truncatechars:30}}</h4>
+                    </div>
+                  </div></a>
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+
+            <div class="row" style="padding-left: 1%; padding-right: 1%;">
+              <h2 style="float: left;">Comédia</h2>
+              <a href="/categoria/Comédia"><h3 style="float: right;">Ver todos</h3></a>
+            </div>
+              <div class="section">
+            <div class="row">
+            {% for f in comedia %}
+                <div class="col-xs-6 col-md-3">
+                  <a href="/filme/{{f.nome}}" class="a-movie"><div class="thumbnail">
+                    <img src="{{f.image}}" alt="{{f.nome}}">
+                    <div class="caption">
+                      <h4>{{f.nome|truncatechars:30}}</h4>
+                    </div>
+                  </div></a>
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+        </div>
+{% endblock %}
