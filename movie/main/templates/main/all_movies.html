@@ -17,8 +17,20 @@
 
 {% block content %}
     <div class="container">
+        <div class="row">
+            <nav aria-label="Limit navigation">
+                <ul class="pagination">
+                    {% for l in qntd %}
+                        {% if l == limit_atual %}
+                            <li class="active"><a href="{% url 'main:todos' %}?limit={{l}}">{{l}}</a></li>
+                        {% else %}
+                            <li><a href="{% url 'main:todos' %}?limit={{l}}">{{l}}</a></li>
+                        {% endif %}
+                  {% endfor %}
+                </ul>
+              </nav>
+        </div>
         {% if movies %}
-        <h3>Total: {{movies.count}}</h3>
         <div>
         <div class="table-responsive">
             <table class="table">
@@ -38,6 +50,52 @@
         </div>
     </div>
         {% endif %}
+        <div class="row">
+
+            <nav class="paginator" aria-label="Page navigation">
+                <ul class="pagination">
+
+                    {% if movies.has_previous %}
+                        <li>
+                            <a href="{% url 'main:todos' %}?page={{movies.previous_page_number}}&limit={{limit_atual}}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="disabled">
+                            <a href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                  {% endif %}
+
+                  {% for num in movies.paginator.page_range %}
+                    {% if num == movies.number %}
+                        <li class="active"><a href="{% url 'main:todos' %}?page={{num}}&limit={{limit_atual}}">{{num}} <span class="sr-only">(current)</span></a></li>
+                    {% else %}
+                        <li>
+                            <a href="{% url 'main:todos' %}?page={{num}}&limit={{limit_atual}}">{{num}}</a>
+                        </li>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if movies.has_next %}
+                    <li>
+                        <a href="{% url 'main:todos' %}?page={{movies.next_page_number}}&limit={{limit_atual}}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                  {% else %}
+                    <li class="disabled">
+                        <a href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </nav>
+
+        </div>
 
     </div>
 {% endblock %}

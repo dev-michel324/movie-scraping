@@ -1,12 +1,13 @@
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.views.generic import ListView
 
 from bs4 import BeautifulSoup as Soup
 import requests
 
 from .models import *
 
-# Create your views here.
 class Varredura():
     category = []
     links = []
@@ -45,17 +46,15 @@ class Varredura():
             for i in range(len(dic[0])):
                 try:
                     ctgObject = Categoria.objects.get(nome=self.category[cat])
-                    # dsc = self.get_description(dic[1][i])
-                    # embed = self.get_embed(dic[1][i])
-                    # print(ctgObject)
                     search = Movies.objects.filter(link=dic[1][i]).exists()
                     if not search:
+                        nome = dic[0][i]
+                        while '/' in nome:
+                            nome = nome.replace('/', '-')
                         filme = Movies(
                             fonte='redecanais',
                             categoria=ctgObject,
-                            nome=dic[0][i],
-                            # embed=embed,
-                            # description=dsc,
+                            nome=nome,
                             link=dic[1][i],
                             image=dic[2][i],
                         )
@@ -95,24 +94,12 @@ class Varredura():
 
         self.varrerPage(cat=cat, total=total, url=url)
 
-
-# var = Varredura()
-# var.categoria()
-# total = var.links
-# for i in range(0, len(total)):
-#     print('\nCATEGORIA: ' + var.category[i] + '\n')
-#     var.page_total(n=i)
-# saida = var.get_description('https://redecanais.wf/venom-tempo-de-carnificina-dublado-2021-1080p_85f3217d9.html')
-# print(saida)
-# print(var.get_embed('https://redecanais.wf/venom-tempo-de-carnificina-dublado-2021-1080p_85f3217d9.html'))
-
 def movie(request, nome):
     category = Categoria.objects.all()
 
     search = request.GET.get('search')
     if search:
-        movies = Movies.objects.filter(nome__icontains=search)
-        return render(request, 'main/query.html', {'movies': movies, 'category': category})
+        return query(request=request)
 
     movie = Movies.objects.get(nome=nome)
 
@@ -140,21 +127,13 @@ def updateList(request):
         var.page_total(n=i, cat=i)
     return redirect('main:index')
 
-# def query(request):
-#     category = Categoria.objects.all()
-#     search = request.GET.get('search')
-#     movies = Movies.objects.filter(nome_icontains=search)
-
-#     return render(request, 'main/query.html', {'movies', movies, 'category', category})
-
 def index(request):
     categoria = Categoria.objects.all()
     last_added = Movies.objects.all().order_by('-added')[:8]
 
     search = request.GET.get('search')
     if search:
-        movies = Movies.objects.filter(nome__icontains = search)
-        return render(request, 'main/query.html', {'movies': movies, 'category': categoria})
+        return query(request=request)
 
     comedia_obj = Categoria.objects.get(nome='Comédia')
     comedia = Movies.objects.filter(categoria=comedia_obj).order_by('-added')[:8]
@@ -169,24 +148,68 @@ def todosFilmes(request):
     movies = Movies.objects.all()
     category = Categoria.objects.all()
 
+    parametro_pag = request.GET.get('page', '1')
+    limit = request.GET.get('limit', '20')
+    
+
+    if not (limit.isdigit() and int(limit) >0 ):
+        limit = '20'
+
+    movies_paginator = Paginator(movies, limit)
+
+    try:
+        page = movies_paginator.page(parametro_pag)
+    except (EmptyPage, PageNotAnInteger):
+        page = movies_paginator.page(1)
+
     search = request.GET.get('search')
     if search:
-        movies = Movies.objects.filter(nome__icontains = search)
-        return render(request, 'main/query.html', {'movies': movies, 'category': category})
+        return query(request=request)
 
-    return render(request, 'main/all_movies.html', {'movies': movies ,'category': category})
+    return render(request, 'main/all_movies.html', {
+        'movies': page ,
+        'category': category,
+        'qntd': ['10', '20', '30', '40', '50'],
+        'limit_atual': limit,
+        })
 
 def listaCategoria(request, categoria):
     cat = Categoria.objects.get(nome=categoria)
     movies = Movies.objects.filter(categoria=cat)
     category = Categoria.objects.all()
 
+    parametro_pag = request.GET.get('page', '1')
+
+    movies_paginator = Paginator(movies, 20)
+
+    try:
+        page = movies_paginator.page(parametro_pag)
+    except (EmptyPage, PageNotAnInteger):
+        page = movies_paginator.page(1)
+
     search = request.GET.get('search')
     if search:
-        movies = Movies.objects.filter(nome__icontains = search)
-        return render(request, 'main/query.html', {'movies': movies, 'category': category})
+        return query(request=request)
 
-    return render(request, 'main/list_category.html', {'movies': movies, 'categoria': categoria, 'category': category})
+    return render(request, 'main/list_category.html', {'movies': page, 'categoria': categoria, 'category': category})
+
+def query(request):
+    category = Categoria.objects.all()
+
+    search = request.GET.get('search')
+    if search:
+        movies = Movies.objects.filter(nome__icontains=search)
+        parametro_pag = request.GET.get('page', '1')
+
+        movies_paginator = Paginator(movies, 20)
+        try:
+            page = movies_paginator.page(parametro_pag)
+        except (EmptyPage, PageNotAnInteger):
+            page = movies_paginator.page(1)
+
+        return render(request, 'main/query.html', {'movies': page, 'category': category, 'search': search})
+
+    return redirect('main:index')
 
 def about(request):
     categoria = Categoria.objects.all()

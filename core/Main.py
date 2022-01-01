@@ -7,12 +7,15 @@ soup = Soup(html, "lxml")
 
 section_main = soup.find_all("div", class_="col-md-12")
 
+i = 0
 for movie in section_main:
+    i += 1
     title_link = movie.find('a', class_="ellipsis")
     img = movie.find('img', class_="img-responsive")
 
     print("\nTitle: ", title_link.text,"\nLink: ", title_link['href'],"\nImg: ", img['data-echo'])
 
+print("\ntotal: ", i)
     # print(
     #     f'''
     #         Nome: {title_link.text}

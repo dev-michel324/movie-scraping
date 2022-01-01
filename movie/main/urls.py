@@ -10,5 +10,5 @@ urlpatterns = [
     path('update_list', views.updateList, name='update_list'),
     path('filmes/todos', views.todosFilmes, name='todos'),
     path('categoria/<str:categoria>', views.listaCategoria, name='lista_categoria'),
-    path('filme/<str:nome>', views.movie, name='filme')
+    path('filme/<str:nome>', views.movie, name='filme'),
 ]
