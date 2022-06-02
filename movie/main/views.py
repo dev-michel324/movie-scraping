@@ -14,7 +14,13 @@ class Varredura():
 
     def categoria(self):
         html = requests.get(
-            url="https://redecanais.wf/browse-filmes-dublado-videos-1-date.html").text
+            url="https://redecanais.to/browse-filmes-dublado-videos-1-date.html")
+        
+        if(html.status_code != 200):
+            print(f"error code - {html.status_code}")
+            return redirect("main:index")
+
+        html = html.text
         soup = Soup(html, "lxml")
 
         page = soup.find('div', class_="pm-category-subcats")
@@ -23,7 +29,7 @@ class Varredura():
             if 'show' in cat.a['href']:
                 continue
             else:
-                self.links.append('https://redecanais.wf' + cat.a['href'])
+                self.links.append('https://redecanais.to' + cat.a['href'])
                 self.category.append(cat.text)
 
     def varrerPage(self, cat, total: int, url: str):
@@ -38,10 +44,10 @@ class Varredura():
 
             for i in movies.find_all('a', class_='ellipsis'):
                 dic[0].append(i.text) #title
-                dic[1].append('https://redecanais.wf'+i['href']) #link
+                dic[1].append('https://redecanais.to'+i['href']) #link
 
             for i in movies.find_all('img', class_='img-responsive'):
-                dic[2].append('https://redecanais.wf'+i['data-echo']) #image link
+                dic[2].append('https://redecanais.to'+i['data-echo']) #image link
 
             for i in range(len(dic[0])):
                 try:
@@ -135,8 +141,11 @@ def index(request):
     if search:
         return query(request=request)
 
-    comedia_obj = Categoria.objects.get(nome='Comédia')
-    comedia = Movies.objects.filter(categoria=comedia_obj).order_by('-added')[:8]
+    try:
+        comedia_obj = Categoria.objects.get(nome='Comédia')
+        comedia = Movies.objects.filter(categoria=comedia_obj).order_by('-added')[:8]
+    except:
+        comedia = None
     
     return render(request, 'main/index.html', {
         'category': categoria,
